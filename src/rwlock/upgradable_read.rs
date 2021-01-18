@@ -99,15 +99,20 @@ impl<R: RawRwLockUpgrade, T> FutureUpgradableReadable<R, T> for RwLock<FutureRaw
     }
 }
 
-pin_project_lite::pin_project! {
-    /// Wrapper to upgrade a RwLockUpgradableReadGuard in Future-style
-    pub struct FutureUpgrade<'a, R, T>
-    where
-        R: RawRwLockUpgrade,
-        T: ?Sized,
-    {
-        rlock: Option<RwLockUpgradableReadGuard<'a, FutureRawRwLock<R>, T>>,
-    }
+/// Wrapper to upgrade a RwLockUpgradableReadGuard in Future-style
+pub struct FutureUpgrade<'a, R, T>
+where
+    R: RawRwLockUpgrade,
+    T: ?Sized,
+{
+    rlock: Option<RwLockUpgradableReadGuard<'a, FutureRawRwLock<R>, T>>,
+}
+
+impl<'a, R, T> Unpin for FutureUpgrade<'a, R, T>
+where
+    R: RawRwLockUpgrade,
+    T: ?Sized,
+{
 }
 
 impl<'a, R: RawRwLockUpgrade, T: ?Sized> Future for FutureUpgrade<'a, R, T> {
